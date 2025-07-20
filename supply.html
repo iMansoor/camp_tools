@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مواقع التسليم</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: #111;
+      color: #fff;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1a1a1a;
+      padding: 10px 20px;
+    }
+    .logo {
+      height: 38px;
+    }
+    .support-icon {
+      height: 28px;
+      transform: translateY(5px);
+    }
+    .main-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex: 1;
+    }
+    .main-buttons a {
+      padding: 5px 2px;
+      font-size: 13px;
+      background: none;
+      border: none;
+      color: #fff;
+      text-decoration: none;
+      position: relative;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: bold;
+    }
+    .main-buttons a::after {
+      content: '';
+      position: absolute;
+      bottom: -42px;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: white;
+      transition: width 0.3s ease;
+      transform: translateY(-34px);
+    }
+    .main-buttons a:hover::after {
+      width: 100%;
+      transform: translateY(-34px);
+    }
+    .main-buttons a[href="animal.html"] img {
+      content: url("icons/animal.svg");
+    }
+    .main-buttons a[href="supply.html"] img {
+      content: url("icons/supply.svg");
+    }
+    .search-box {
+      max-width: 1340px;
+      width: 90%;
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .search-box input {
+      padding: 15px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #181818 url('icons/search.svg') no-repeat 10px center;
+      background-size: 20px;
+      color: #fff;
+      flex: 1;
+      max-width: 250px;
+      padding-left: 40px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+      padding: 10px;
+      max-width: 1340px;
+      margin: 0 auto;
+    }
+    .map-item {
+      background: #181818;
+      border: 1px solid #333;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .map-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .map-item img:hover {
+      opacity: 0.85;
+    }
+    .map-item span {
+      display: block;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .modal-controls-wrapper {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    .modal-controls-wrapper button {
+      padding: 10px 14px;
+      font-size: 18px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .modal-controls-wrapper button:hover {
+      background-color: #444;
+    }
+    .modal img {
+      max-width: 90%;
+      max-height: 80%;
+      object-fit: contain;
+      transition: transform 0.2s;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="icons/logo.png" alt="Logo" class="logo">
+    <div class="main-buttons">
+      <a href="animal.html"><img src="icons/animal.svg" alt="Animal Icon">قائمة الحيوانات</a>
+      <a href="supply.html"><img src="icons/supply.svg" alt="Supply Icon">مواقع التسليم</a>
+      <a href="https://jeanropke.github.io/RDOMap/" target="_blank"><img src="icons/map.svg" alt="Map Icon">الخريطة</a>
+      <a href="stable.html"><img src="icons/horse.svg" alt="Horse Icon">الأسطبل</a>
+    </div>
+    <a href="support.html"><img src="icons/support.svg" alt="Support" class="support-icon"></a>
+
+  </header>
+  <div class="search-box">
+    <input type="number" id="searchInput" placeholder="بحث" min="1" max="100" oninput="filterLocations()" />
+  </div>
+  <div class="grid" id="mapGrid"></div>
+  <div class="modal" id="imageModal">
+    <div class="modal-controls-wrapper">
+      <button onclick="zoomIn()">+</button>
+      <button onclick="zoomOut()">-</button>
+      <button onclick="closeModal()">x</button>
+    </div>
+    <img id="modalImg" src="" alt="موقع" />
+  </div>
+  <script>
+    const grid = document.getElementById('mapGrid');
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    let zoomLevel = 1;
+    for (let i = 1; i <= 75; i++) {
+      const filename = `${i}.jpg`;
+      const div = document.createElement('div');
+      div.className = 'map-item';
+      div.dataset.index = i;
+      const img = document.createElement('img');
+      img.src = `map/${filename}`;
+      img.alt = `Map ${i}`;
+      img.onclick = () => openModal(`map/${filename}`);
+      img.onload = () => {
+        div.innerHTML = '';
+        div.appendChild(img);
+        const label = document.createElement('span');
+        label.textContent = `موقع ${i}`;
+        div.appendChild(label);
+      };
+      img.onerror = () => {
+        div.innerHTML = `
+          <div style="border: 1px dashed red; padding: 30px; border-radius: 6px; background-color: #2a0000;">موقع التسليم مفقود</div>
+          <span>موقع ${i}</span>
+        `;
+      };
+      grid.appendChild(div);
+    }
+    function filterLocations() {
+      const val = document.getElementById("searchInput").value;
+      const items = document.querySelectorAll(".map-item");
+      items.forEach(item => {
+        if (!val || item.dataset.index === val) {
+          item.classList.remove("hidden");
+        } else {
+          item.classList.add("hidden");
+        }
+      });
+    }
+    function openModal(src) {
+      modalImg.src = src;
+      zoomLevel = 1;
+      modalImg.style.transform = `scale(${zoomLevel})`;
+      modal.style.display = 'flex';
+    }
+    function closeModal() {
+      modal.style.display = 'none';
+      modalImg.src = '';
+    }
+    function zoomIn() {
+      zoomLevel += 0.2;
+      modalImg.style.transform = `scale(${zoomLevel})`;
+    }
+    function zoomOut() {
+      zoomLevel = Math.max(0.4, zoomLevel - 0.2);
+      modalImg.style.transform = `scale(${zoomLevel})`;
+    }
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>قائمة الحيوانات</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: #111;
+      color: #fff;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1a1a1a;
+      padding: 10px 20px;
+    }
+    .logo {
+      height: 38px;
+    }
+    .support-icon {
+      height: 28px;
+      transform: translateY(5px);
+    }
+    .main-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex: 1;
+    }
+    .main-buttons a {
+      padding: 5px 2px;
+      font-size: 13px;
+      background: none;
+      border: none;
+      color: #fff;
+      text-decoration: none;
+      position: relative;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: bold;
+    }
+    .main-buttons a::after {
+      content: '';
+      position: absolute;
+      bottom: -42px;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: white;
+      transition: width 0.3s ease;
+      transform: translateY(-34px);
+    }
+    .main-buttons a:hover::after {
+      width: 100%;
+      transform: translateY(-34px);
+    }
+    .main-buttons a[href="animal.html"] img {
+      content: url("icons/animal.svg");
+    }
+    .main-buttons a[href="supply.html"] img {
+      content: url("icons/supply.svg");
+    }
+    .form {
+      max-width: 500px;
+      width: 100%;
+      margin: 20px auto 10px auto;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+    }
+    .form input, .form button {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #181818;
+      color: #fff;
+      transform: translateY(15px);
+      
+    }
+    .form button {
+      background: #444;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      transform: translateY(15px);
+      
+    }
+    .form button:hover {
+      background: #666;
+    }
+    .form input[type="text"] {
+      padding: 21px;
+      background-position: 10px center;
+      transform: translateY(15px);
+    }
+    .search-container {
+      max-width: 1340px;
+      width: 100%;
+      margin: 26px auto 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .search-container input {
+      padding: 15px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #181818 url('icons/search.svg') no-repeat 10px center;
+      background-size: 20px;
+      color: #fff;
+      flex: 1;
+      max-width: 250px;
+      padding-left: 40px;
+      transform: translateY(-10px);
+      margin-right: -1030px;
+      
+    }
+    .suggestions {
+      background: #222;
+      position: absolute;
+      top: 60px; /* Adjust as needed */
+      left: 0;
+      width: 350px;
+      max-height: 200px;
+      overflow-y: auto;
+      border-radius: 6px;
+      border: 1px solid #333;
+      display: none;
+      flex-direction: column;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      transform: translateY(16px);
+    }
+
+    .suggestions li {
+      display: flex;
+      align-items: normal;
+      padding: 3px;
+      cursor: pointer;
+      list-style: none;
+      gap: 6px; /* Reduce gap between icon and text */
+    }
+
+    .suggestions li img {
+      width: 50px;
+      height: 50px;
+      object-fit: fill;
+      flex-shrink: 0; /* Prevents the image from shrinking */
+      transform: translate(15px, 0px);
+    }
+
+    .suggestions li:hover {
+      background: #333;
+    }
+    table {
+      max-width: 1340px;
+      width: 90%;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background: #181818;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: center;
+      font-size: 14px;
+    }
+    th {
+      background: #222;
+    }
+    tbody tr {
+      border-bottom: none !important;
+    }
+    .animal-cell {
+      display: flex;
+      align-items: center;
+      gap: 122px;
+      font-size: large;
+      justify-content: flex-start;
+    }
+    .animal-cell img {
+      width: 60px;
+      height: 60px;
+      object-fit: fill;
+      transform: translateX(40px);
+    }
+    .material-edit input {
+      width: 60px;
+      background: none;
+      color: rgb(255, 255, 255);
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 18px;
+    }
+    .material-edit input::placeholder {
+      color: white;
+      opacity: 0.6;
+    }
+    .action-icons button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px;
+    }
+    .action-icons img {
+      height: 18px;
+      width: 18px;
+      object-fit: fill;
+    }
+    #animalInput {
+    font-size: 16px;
+    }
+
+    #materialInput {
+        font-size: 16px;
+    }
+
+    .form button {
+        font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+<header>
+    <img src="icons/logo.png" alt="Logo" class="logo">
+    <div class="main-buttons">
+      <a href="animal.html"><img src="icons/animal.svg" alt="Animal Icon">قائمة الحيوانات</a>
+      <a href="supply.html"><img src="icons/supply.svg" alt="Supply Icon">مواقع التسليم</a>
+      <a href="https://jeanropke.github.io/RDOMap/" target="_blank"><img src="icons/map.svg" alt="Map Icon">الخريطة</a>
+      <a href="stable.html"><img src="icons/horse.svg" alt="Horse Icon">الأسطبل</a>
+    </div>
+    <a href="support.html"><img src="icons/support.svg" alt="Support" class="support-icon"></a>  </header>
+<div class="form">
+  <div style="position: relative; flex: 1;">
+    <input type="text" id="animalInput" placeholder="اسم الحيوان..." oninput="onAnimalInput()" autocomplete="off">
+    <div id="suggestions" class="suggestions"></div>
+  </div>
+  <input type="number" id="materialInput" placeholder="المتيريال">
+  <button onclick="addEntry()">إضافة الحيوان</button>
+</div>
+<div class="search-container">
+  <input type="text" id="searchInput" placeholder="بحث" oninput="renderTable()" />
+</div>
+<table>
+  <thead>
+    <tr>
+      <th>الحيوان</th>
+      <th>المتيريال</th>
+      <th>الإجراءات</th>
+    </tr>
+  </thead>
+  <tbody id="logTable"></tbody>
+</table>
+<script>
+    const binId = "686101ff8561e97a502dfb0e";
+    const apiKey = "$2a$10$iCoTiXC5Q2rvlvgOvL51WOONZG9ZufQABohuhB0E71Pz7/QjgW4/.";
+    let entries = [];
+    let creatures = [];
+    let creaturesReady = false;
+
+    async function loadCreatures() {
+      try {
+        const res = await fetch("json/creatures.json");
+        const json = await res.json();
+        creatures = Array.isArray(json) ? json : json.creatures || [];
+        creaturesReady = true;
+        await loadEntries();
+      } catch (err) {
+        alert("Error loading creatures.json");
+        console.error(err);
+      }
+    }
+
+    async function loadEntries() {
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+          headers: { "X-Master-Key": apiKey }
+        });
+        const data = await res.json();
+        entries = data.record || [];
+        renderTable();
+      } catch (err) {
+        alert("Error loading data from JSONBin");
+        console.error(err);
+      }
+    }
+
+    async function saveEntries() {
+      try {
+        await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": apiKey
+          },
+          body: JSON.stringify(entries)
+        });
+      } catch (err) {
+        alert("Error saving to JSONBin");
+        console.error(err);
+      }
+    }
+
+    function getIconSrc(type) {
+      const birdTypes = ["animal_bluejay", "animal_cardinal", "animal_chicken_leghorn", "animal_prairiechicken", "animal_californiancondor", "animal_cormorant_doublecrested", "animal_cormorant_neotropic", "animal_cranewhooping_whooping", "animal_crow", "animal_duck", "animal_eagle_golden", "animal_egret_reddish", "animal_goosecanada", "animal_hawk_ferruginous", "animal_heron_greatblue", "animal_loon_pacific", "animal_oriole_baltimore", "animal_oriole_hooded", "animal_owl_great", "animal_owl_californian", "animal_pelican_white", "animal_pheasant_ringneck", "animal_pigeon_bandtailed", "animal_quail", "animal_raven", "animal_robin", "animal_rooster_dominique", "animal_seagull_herring", "animal_songbird_scarlet", "animal_songbird_western", "animal_sparrow_eurasian", "animal_roseatespoonbill", "animal_turkey_eastern", "animal_vulture_eastern", "animal_vulture_western", "animal_cedarwaxwing", "animal_macaw"];
+      const folder = birdTypes.includes(type) ? "bird_icons" : "animal_icons";
+      return `${folder}/${type}.png`;
+    }
+
+    function onAnimalInput() {
+      if (!creaturesReady) return;
+      const input = document.getElementById("animalInput");
+      const list = document.getElementById("suggestions");
+      const query = input.value.toLowerCase();
+      list.innerHTML = "";
+      const matches = creatures.filter(c => c["data-tippy-content"].toLowerCase().includes(query));
+
+      matches.forEach(creature => {
+        if (entries.find(e => e.name === creature["data-tippy-content"])) return;
+        const li = document.createElement("li");
+        li.innerHTML = `<div class="animal-cell"><img src="${getIconSrc(creature["data-type"])}" class="animal-icon" onerror="this.style.display='none'" />${creature["data-tippy-content"]}</div>`;
+        li.onclick = () => {
+          input.value = creature["data-tippy-content"];
+          input.dataset.type = creature["data-type"];
+          list.style.display = "none";
+          document.getElementById("materialInput").disabled = false;
+          document.getElementById("materialInput").focus();
+        };
+        list.appendChild(li);
+      });
+      list.style.display = matches.length ? "block" : "none";
+    }
+
+    document.addEventListener("click", e => {
+      const input = document.getElementById("animalInput");
+      const list = document.getElementById("suggestions");
+      if (!input.contains(e.target) && !list.contains(e.target)) list.style.display = "none";
+    });
+
+    async function addEntry() {
+      const name = document.getElementById('animalInput').value;
+      const type = document.getElementById('animalInput').dataset.type;
+      const material = parseInt(document.getElementById('materialInput').value);
+      if (!type || !creatures.find(c => c["data-tippy-content"] === name)) return alert("أختر حيوان من القائمة.");
+      if (isNaN(material)) return alert(".أختر رقم صحيح للمتيريال");
+      if (entries.find(e => e.name === name)) return alert("الحيوان مضاف مسبقا.");
+
+      entries.push({ name, type, material });
+      document.getElementById('animalInput').value = '';
+      document.getElementById('animalInput').dataset.type = '';
+      document.getElementById('materialInput').value = '';
+      document.getElementById('materialInput').disabled = true;
+      await saveEntries();
+      renderTable();
+    }
+
+    async function confirmEdit(entryIndex, rowIndex) {
+      const newValue = document.getElementById(`material-${rowIndex}`).value;
+      if (!confirm("هل أنت متأكد لتحديث المتيريال الخاص بهذا الحيوان؟")) return;
+      const parsed = parseInt(newValue);
+      if (isNaN(parsed)) return alert("قيمة متيريال خاطئة.");
+      entries[entryIndex].material = parsed;
+      await saveEntries();
+      renderTable();
+    }
+
+    async function confirmDelete(entryIndex) {
+      if (confirm("هل أنت متأكد من حذف هذا الحقل؟")) {
+        entries.splice(entryIndex, 1);
+        await saveEntries();
+        renderTable();
+      }
+    }
+
+    function renderTable() {
+      const table = document.getElementById('logTable');
+      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+      table.innerHTML = '';
+
+      const filtered = entries
+        .map((e, i) => ({ ...e, _index: i }))
+        .filter(e => e.name.toLowerCase().includes(searchQuery))
+        .sort((a, b) => b.material - a.material);
+
+      filtered.forEach((entry, rowIndex) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="animal-cell">
+          <img src="${getIconSrc(entry.type)}" class="animal-icon" onerror="this.style.display='none'" />
+          ${entry.name}
+        </td>
+        <td class="material-edit">
+          <input type="number" value="${entry.material}" id="material-${rowIndex}" />
+        </td>
+        <td>
+          <button onclick="confirmEdit(${entry._index}, ${rowIndex})" style="background: none; border: none; padding: 0; cursor: pointer;">
+            <img src="icons/edit.svg" alt="تعديل" style="width: 30px; height: 30px;" />
+          </button>
+          <button onclick="confirmDelete(${entry._index})" style="background: none; border: none; padding: 0; cursor: pointer;">
+            <img src="icons/delete.svg" alt="حذف" style="width: 30px; height: 30px;" />
+
+          </button>
+        </td>`;
+      table.appendChild(row);
+    });
+  }  
+
+
+    loadCreatures();
+  </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الأسطبل</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: #111;
+      color: #fff;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1a1a1a;
+      padding: 10px 20px;
+    }
+    .logo {
+      height: 38px;
+    }
+    .support-icon {
+      height: 28px;
+      transform: translateY(5px);
+    }
+    .main-buttons {
+      display: flex; justify-content: center; gap: 20px; flex: 1;
+    }
+    .main-buttons a {
+      padding: 5px 2px; font-size: 13px; background: none; border: none;
+      color: #fff; text-decoration: none; position: relative; font-weight: bold;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .main-buttons a::after {
+      content: ''; position: absolute; bottom: -42px; left: 0; width: 0%;
+      height: 2px; background: white; transition: width 0.3s ease; transform: translateY(-34px);
+    }
+    .main-buttons a:hover::after { width: 100%; transform: translateY(-34px);}
+    .main-buttons a[href="animal.html"] img { content: url("icons/animal.svg"); }
+    .main-buttons a[href="supply.html"] img { content: url("icons/supply.svg"); }
+    .main-buttons a[href="stable.html"] img { content: url("icons/horse.svg"); }
+    .main-buttons a[href*="RDOMap"] img { content: url("icons/map.svg"); }
+    .search-bar {
+      max-width: 600px; margin: 30px auto 16px auto; display: flex; justify-content: center; align-items: center;
+    }
+    .search-bar input {
+      width: 350px; padding: 14px; border-radius: 6px; border: 1px solid #444;
+      background: #181818 url('icons/search.svg') no-repeat 10px center; background-size: 20px;
+      color: #fff; font-size: 16px; padding-left: 40px;
+    }
+    .horses-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+      gap: 26px; max-width: 1400px; margin: 0 auto 30px auto; padding: 0 18px;
+    }
+    .horse-card {
+      background: #222;
+      border-radius: 18px;
+      box-shadow: 0 2px 16px #0003;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 12px 18px 12px;
+      transition: transform 0.15s;
+      position: relative;
+      min-height: 420px;
+    }
+    .horse-card:hover { transform: translateY(-5px) scale(1.01);}
+    .horse-img {
+      width: 135px; height: 120px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #181818;
+      cursor: pointer;
+      transition: box-shadow 0.2s;
+      box-shadow: 0 0 0 0 #FFD700;
+    }
+    .horse-img:active { box-shadow: 0 0 0 4px #FFD70044;}
+    .horse-title {
+      font-weight: bold; font-size: 17px; margin: 14px 0 6px 0; color: #fff; text-align: center;
+    }
+    .horse-info {
+      color: #fff; font-size: 15px; text-align: right; width: 100%; direction: rtl;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .horse-info label {
+      min-width: 74px; display: inline-block; color: #cfcfcf; margin-left: 5px;
+    }
+    .dots { letter-spacing: 2px; color: #FFD700; font-size: 20px; vertical-align: middle; }
+    .horse-price {
+      font-weight: bold; font-size: 20px; text-align: center;
+      display: flex; align-items: center; justify-content: center; gap: 3px;
+      margin-top: 18px;
+    }
+    .gold-price { color: #FFD700; }
+    .white-price { color: #fff; }
+    .gold-icon{ width: 20px; height: 20px; vertical-align: middle; transform: translateY(-3px); }
+    .dollar-icon { width: 18px; height: 18px; vertical-align: middle; transform: translate(-5px,-1px); }
+    /* Modal */
+    #modal-bg {
+      display: none; position: fixed; z-index: 9999; inset: 0;
+      background: rgba(0,0,0,0.87); justify-content: center; align-items: center;
+    }
+    #modal-bg.active { display: flex; }
+    #modal-img { max-width: 96vw; max-height: 92vh; border-radius: 12px; box-shadow: 0 2px 24px #000;}
+    @media (max-width:600px) {
+      .horses-grid { grid-template-columns: 1fr 1fr;}
+      .horse-card { min-height: 370px;}
+      .search-bar input { width: 99vw;}
+    }
+  </style>
+</head>
+<body>
+<header>
+    <img src="logo.png" alt="Logo" class="logo">
+    <div class="main-buttons">
+      <a href="animal.html"><img src="icons/animal.svg" alt="Animal Icon">قائمة الحيوانات</a>
+      <a href="supply.html"><img src="icons/supply.svg" alt="Supply Icon">مواقع التسليم</a>
+      <a href="https://jeanropke.github.io/RDOMap/" target="_blank"><img src="icons/map.svg" alt="Map Icon">الخريطة</a>
+      <a href="stable.html"><img src="icons/horse.svg" alt="Horse Icon">الأسطبل</a>
+    </div>
+    <a href="support.html"><img src="icons/support.svg" alt="Support" class="support-icon"></a>
+  </header>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="ابحث باسم الحصان ..." oninput="renderHorses()" />
+</div>
+<div class="horses-grid" id="horsesGrid"></div>
+
+<!-- Modal for full-size image -->
+<div id="modal-bg" onclick="closeModal()">
+  <img id="modal-img" src="">
+</div>
+
+<script>
+const horsesDataUrl = 'json/horses.json';
+const horsesImgPath = 'horses/';
+let horses = [];
+
+function parseLevelDots(val) {
+  // مثل: "3(2)" → 3 أبيض، 2 ذهبي يدل على التدريب، 5 رمادي غامق
+  if (!val) return '';
+  let match = val.match(/(\d+)\((\d+)\)/);
+  if (!match) return '';
+  let white = parseInt(match[1]);
+  let lightGray = parseInt(match[2]);
+  let total = white + lightGray;
+  let darkGray = 10 - total;
+  let dots = '';
+  for (let i = 0; i < white; i++)
+    dots += '<span style="color:#fff;">●</span>';
+  for (let i = 0; i < lightGray; i++)
+    dots += '<span style="color:#FFD700;">●</span>';
+  for (let i = 0; i < darkGray; i++)
+    dots += '<span style="color:#333;">●</span>';
+  return dots;
+  
+}
+
+function renderPrice(price) {
+  // عملة الذهب أو الدولار
+  if (typeof price !== 'string') return price;
+  if (price.includes('$')) {
+    return `<span class="white-price">${price.replace('$', '')}
+      <img src="icons/dollar.svg" alt="$" class="dollar-icon">
+    </span>`;
+  } else if (price.includes('G')) {
+    return `<span class="gold-price">${price.replace('G', '')}
+      <img src="icons/gold.svg" alt="G" class="gold-icon">
+    </span>`;
+  }
+  return price;
+}
+
+function renderHorses() {
+  const grid = document.getElementById('horsesGrid');
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+  let filtered = horses.filter(h =>
+    h.name.toLowerCase().includes(query)
+  );
+  // ترتيب حسب السرعة ثم التسارع
+  filtered.sort((a, b) => {
+    let as = parseInt((a.speed||"").split('(')[0]) || 0;
+    let bs = parseInt((b.speed||"").split('(')[0]) || 0;
+    if (bs !== as) return bs - as;
+    let aa = parseInt((a.acceleration||"").split('(')[0]) || 0;
+    let ba = parseInt((b.acceleration||"").split('(')[0]) || 0;
+    return ba - aa;
+  });
+
+  grid.innerHTML = '';
+  for (const h of filtered) {
+    grid.innerHTML += `
+      <div class="horse-card">
+        <img src="${horsesImgPath + h.image}" class="horse-img" alt="${h.name}" onclick="showModal('${horsesImgPath + h.image}')"/>
+        <div class="horse-title">${h.name}</div>
+        <div class="horse-info">
+          <div><label>السرعة:</label> <span class="dots">${parseLevelDots(h.speed)}</span></div>
+          <div><label>التسارع:</label> <span class="dots">${parseLevelDots(h.acceleration)}</span></div>
+          <div><label>الصحة:</label> ${h.health}</div>
+          <div><label>التحمل:</label> ${h.stamina}</div>
+          <div><label>طريقة القيادة:</label> ${h.handling}</div>
+        </div>
+        <div class="horse-price">${renderPrice(h.price)}</div>
+      </div>
+    `;
+  }
+}
+
+function showModal(img) {
+  document.getElementById('modal-img').src = img;
+  document.getElementById('modal-bg').classList.add('active');
+}
+function closeModal() {
+  document.getElementById('modal-bg').classList.remove('active');
+  document.getElementById('modal-img').src = '';
+}
+
+fetch(horsesDataUrl)
+  .then(res => res.json())
+  .then(data => {
+    horses = data;
+    renderHorses();
+  });
+
+window.renderHorses = renderHorses;
+window.showModal = showModal;
+window.closeModal = closeModal;
+</script>
+</body>
+</html>

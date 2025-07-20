@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animal Logger</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #101010;
+      color: #f4f4f4;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+    }
+    .top-buttons {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .top-buttons a {
+      padding: 10px 20px;
+      margin: 0 10px;
+      background-color: #181818;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+    .top-buttons a:hover {
+      background-color: #2c2c2c;
+    }
+    .form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 50px;
+      margin-bottom: 30px;
+    }
+    input, button {
+      padding: 10px 14px;
+      font-size: 15px;
+      background-color: #181818;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 8px;
+    }
+    input:focus {
+      outline: 2px solid #0099ff;
+    }
+    .search {
+      max-width: 320px;
+      margin: 0 auto 25px;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 16px 20px;
+      text-align: left;
+      background-color: #111110;
+    }
+    th {
+      font-size: 15px;
+      border-bottom: 1px solid #333;
+    }
+    td {
+      border-bottom: none;
+    }
+    td:nth-child(2) {
+      padding-left: 40px;
+    }
+    ul.suggestions {
+      background: #181818;
+      border: 1px solid #333;
+      position: absolute;
+      z-index: 10;
+      max-height: 200px;
+      overflow-y: auto;
+      width: 100%;
+      margin-top: 0;
+      list-style: none;
+      padding-left: 0;
+      border-radius: 6px;
+    }
+    ul.suggestions li {
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+    ul.suggestions li:hover {
+      background: #333;
+    }
+    .material-edit input {
+      width: 80px;
+      background-color: #1e1e1e;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .animal-cell {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .animal-icon {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+    button {
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    button:hover {
+      background-color: #2c2c2c;
+    }
+    td button {
+      margin-right: 8px;
+      padding: 8px 10px;
+      border: none;
+      border-radius: 6px;
+      background-color: #1f1f1f;
+      font-size: 16px;
+    }
+    td button:first-child {
+      color: #ffb74d;
+    }
+    td button:last-child {
+      color: #ff5c8d;
+    }
+    td button:focus {
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>أدوات المخيم</h1>
+  <div class="top-buttons">
+    <a href="animal.html">🐾 متيريال الحيوانات</a>
+    <a href="supply.html">📍 مواقع التسليم</a>
+  </div>
+
+  <div class="form">
+    <div style="position: relative; flex-grow: 1; max-width: 300px;">
+      <input type="text" id="animalInput" placeholder="الحيوان او الطائر" oninput="onAnimalInput()" autocomplete="off" style="width: 100%;" />
+      <ul id="suggestions" class="suggestions" style="display: none;"></ul>
+    </div>
+    <div style="flex-grow: 1; max-width: 100px;">
+      <input type="number" id="materialInput" placeholder="المتيريال" disabled style="width: 100%;" />
+    </div>
+    <button onclick="addEntry()">+ أضف</button>
+  </div>
+
+  <div class="search">
+    <input type="text" id="searchInput" placeholder="ابحث عن حيوان معين فالجدول" oninput="renderTable()" style="width: 100%;" />
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>الحيوان</th><th>المتيريال</th><th>الحذف | التعديل</th></tr>
+    </thead>
+    <tbody id="logTable"></tbody>
+  </table>
+
+  <script>
+    const binId = "686101ff8561e97a502dfb0e";
+    const apiKey = "$2a$10$iCoTiXC5Q2rvlvgOvL51WOONZG9ZufQABohuhB0E71Pz7/QjgW4/.";
+    let entries = [];
+    let creatures = [];
+    let creaturesReady = false;
+
+    async function loadCreatures() {
+      try {
+        const res = await fetch("creatures.json");
+        const json = await res.json();
+        creatures = Array.isArray(json) ? json : json.creatures || [];
+        creaturesReady = true;
+        await loadEntries();
+      } catch (err) {
+        alert("Error loading creatures.json");
+        console.error(err);
+      }
+    }
+
+    async function loadEntries() {
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+          headers: { "X-Master-Key": apiKey }
+        });
+        const data = await res.json();
+        entries = data.record || [];
+        renderTable();
+      } catch (err) {
+        alert("Error loading data from JSONBin");
+        console.error(err);
+      }
+    }
+
+    async function saveEntries() {
+      try {
+        await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": apiKey
+          },
+          body: JSON.stringify(entries)
+        });
+      } catch (err) {
+        alert("Error saving to JSONBin");
+        console.error(err);
+      }
+    }
+
+    function getIconSrc(type) {
+      const birdTypes = ["animal_bluejay", "animal_cardinal", "animal_chicken_leghorn", "animal_prairiechicken", "animal_californiancondor", "animal_cormorant_doublecrested", "animal_cormorant_neotropic", "animal_cranewhooping_whooping", "animal_crow", "animal_duck", "animal_eagle_golden", "animal_egret_reddish", "animal_goosecanada", "animal_hawk_ferruginous", "animal_heron_greatblue", "animal_loon_pacific", "animal_oriole_baltimore", "animal_oriole_hooded", "animal_owl_great", "animal_owl_californian", "animal_pelican_white", "animal_pheasant_ringneck", "animal_pigeon_bandtailed", "animal_quail", "animal_raven", "animal_robin", "animal_rooster_dominique", "animal_seagull_herring", "animal_songbird_scarlet", "animal_songbird_western", "animal_sparrow_eurasian", "animal_roseatespoonbill", "animal_turkey_eastern", "animal_vulture_eastern", "animal_vulture_western", "animal_cedarwaxwing", "animal_macaw"];
+      const folder = birdTypes.includes(type) ? "bird_icons" : "animal_icons";
+      return `${folder}/${type}.png`;
+    }
+
+    function onAnimalInput() {
+      if (!creaturesReady) return;
+      const input = document.getElementById("animalInput");
+      const list = document.getElementById("suggestions");
+      const query = input.value.toLowerCase();
+      list.innerHTML = "";
+      const matches = creatures.filter(c => c["data-tippy-content"].toLowerCase().includes(query));
+
+      matches.forEach(creature => {
+        if (entries.find(e => e.name === creature["data-tippy-content"])) return;
+        const li = document.createElement("li");
+        li.innerHTML = `<div class="animal-cell"><img src="${getIconSrc(creature["data-type"])}" class="animal-icon" onerror="this.style.display='none'" />${creature["data-tippy-content"]}</div>`;
+        li.onclick = () => {
+          input.value = creature["data-tippy-content"];
+          input.dataset.type = creature["data-type"];
+          list.style.display = "none";
+          document.getElementById("materialInput").disabled = false;
+          document.getElementById("materialInput").focus();
+        };
+        list.appendChild(li);
+      });
+      list.style.display = matches.length ? "block" : "none";
+    }
+
+    document.addEventListener("click", e => {
+      const input = document.getElementById("animalInput");
+      const list = document.getElementById("suggestions");
+      if (!input.contains(e.target) && !list.contains(e.target)) list.style.display = "none";
+    });
+
+    async function addEntry() {
+      const name = document.getElementById('animalInput').value;
+      const type = document.getElementById('animalInput').dataset.type;
+      const material = parseInt(document.getElementById('materialInput').value);
+      if (!type || !creatures.find(c => c["data-tippy-content"] === name)) return alert("أختر حيوان من القائمة.");
+      if (isNaN(material)) return alert(".أختر رقم صحيح للمتيريال");
+      if (entries.find(e => e.name === name)) return alert("الحيوان مضاف مسبقا.");
+
+      entries.push({ name, type, material });
+      document.getElementById('animalInput').value = '';
+      document.getElementById('animalInput').dataset.type = '';
+      document.getElementById('materialInput').value = '';
+      document.getElementById('materialInput').disabled = true;
+      await saveEntries();
+      renderTable();
+    }
+
+    async function confirmEdit(entryIndex, rowIndex) {
+      const newValue = document.getElementById(`material-${rowIndex}`).value;
+      if (!confirm("هل أنت متأكد لتحديث المتيريال الخاص بهذا الحيوان؟")) return;
+      const parsed = parseInt(newValue);
+      if (isNaN(parsed)) return alert("قيمة متيريال خاطئة.");
+      entries[entryIndex].material = parsed;
+      await saveEntries();
+      renderTable();
+    }
+
+    async function confirmDelete(entryIndex) {
+      if (confirm("هل أنت متأكد من حذف هذا الحقل؟")) {
+        entries.splice(entryIndex, 1);
+        await saveEntries();
+        renderTable();
+      }
+    }
+
+    function renderTable() {
+      const table = document.getElementById('logTable');
+      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+      table.innerHTML = '';
+
+      const filtered = entries
+        .map((e, i) => ({ ...e, _index: i }))
+        .filter(e => e.name.toLowerCase().includes(searchQuery))
+        .sort((a, b) => b.material - a.material);
+
+      filtered.forEach((entry, rowIndex) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="animal-cell">
+            <img src="${getIconSrc(entry.type)}" class="animal-icon" onerror="this.style.display='none'" />
+            ${entry.name}
+          </td>
+          <td class="material-edit">
+            <input type="number" value="${entry.material}" id="material-${rowIndex}" />
+          </td>
+          <td>
+            <button onclick="confirmEdit(${entry._index}, ${rowIndex})">✏️</button>
+            <button onclick="confirmDelete(${entry._index})">❌</button>
+          </td>`;
+        table.appendChild(row);
+      });
+    }
+
+    loadCreatures();
+  </script>
+</body>
+</html>

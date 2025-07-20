@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delivery Supply Map</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to right, #111, #181818);
+      color: #f5f5f5;
+    }
+    header {
+      background: linear-gradient(to right, #1f1f1f, #292929);
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+    .top-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 1rem;
+    }
+    .top-buttons a {
+      background: #222;
+      padding: 0.75rem 1.8rem;
+      border-radius: 10px;
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+    .top-buttons a:hover {
+      background: #333;
+      transform: scale(1.05);
+    }
+    .search-box {
+      text-align: center;
+      margin: 1rem;
+    }
+    .search-box input {
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      background: #1a1a1a;
+      color: #fff;
+      width: 260px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .map-container {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      background: #222;
+    }
+    .map-container img {
+      width: 100%;
+      display: block;
+    }
+    .pin {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      background: red;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      transition: transform 0.2s ease;
+    }
+    .pin:hover {
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .modal img {
+      max-width: 90%;
+      max-height: 80%;
+      background: #a00;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+    .modal-controls {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+    .modal-controls button {
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #222;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .modal-controls button:hover {
+      background: #444;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📍 مواقع التسليم على الخريطة</h1>
+  </header>
+  <div class="top-buttons">
+    <a href="animal.html">🐾 العودة للحيوانات</a>
+  </div>
+  <div class="search-box">
+    <input type="number" id="searchInput" placeholder="ابحث برقم الموقع..." oninput="highlightPin()" />
+  </div>
+  <div class="map-container">
+    <img src="map/main-map.jpg" alt="خريطة" />
+    <div id="pins"></div>
+  </div>
+  <div class="modal" id="imageModal">
+    <img id="modalImg" src="" alt="Map Location" />
+    <div class="modal-controls">
+      <button onclick="zoomIn()">+</button>
+      <button onclick="zoomOut()">-</button>
+      <button onclick="closeModal()">✖</button>
+    </div>
+  </div>
+  <script>
+    const pinsContainer = document.getElementById('pins');
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    let zoomLevel = 1;
+
+    const locations = [];
+    for (let i = 1; i <= 100; i++) {
+      locations.push({ id: i, x: Math.random() * 90 + 5, y: Math.random() * 90 + 5 });
+    }
+
+    locations.forEach(loc => {
+      const pin = document.createElement('div');
+      pin.className = 'pin';
+      pin.style.left = loc.x + '%';
+      pin.style.top = loc.y + '%';
+      pin.textContent = loc.id;
+      pin.onclick = () => openModal(`map/${loc.id}.jpg`);
+      pinsContainer.appendChild(pin);
+    });
+
+    function highlightPin() {
+      const val = document.getElementById("searchInput").value;
+      document.querySelectorAll(".pin").forEach(pin => {
+        pin.style.opacity = (!val || pin.textContent === val) ? '1' : '0.3';
+      });
+    }
+
+    function openModal(src) {
+      modalImg.src = src;
+      zoomLevel = 1;
+      modalImg.style.transform = `scale(${zoomLevel})`;
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      modalImg.src = '';
+    }
+
+    function zoomIn() {
+      zoomLevel += 0.2;
+      modalImg.style.transform = `scale(${zoomLevel})`;
+    }
+
+    function zoomOut() {
+      zoomLevel = Math.max(0.4, zoomLevel - 0.2);
+      modalImg.style.transform = `scale(${zoomLevel})`;
+    }
+
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

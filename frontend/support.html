@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الدعم الفني</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: #111;
+      color: #fff;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1a1a1a;
+      padding: 10px 20px;
+    }
+    .logo { height: 38px; }
+    .support-icon { height: 28px; transform: translateY(5px);}
+    .main-buttons {
+      display: flex; justify-content: center; gap: 20px; flex: 1;
+    }
+    .main-buttons a {
+      padding: 5px 2px; font-size: 13px; background: none; border: none;
+      color: #fff; text-decoration: none; position: relative; font-weight: bold;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .main-buttons a::after {
+      content: ''; position: absolute; bottom: -42px; left: 0; width: 0%;
+      height: 2px; background: white; transition: width 0.3s ease; transform: translateY(-34px);
+    }
+    .main-buttons a:hover::after { width: 100%; transform: translateY(-34px);}
+    .main-buttons a[href="animal.html"] img { content: url("icons/animal.svg"); }
+    .main-buttons a[href="supply.html"] img { content: url("icons/supply.svg"); }
+    .main-buttons a[href="stable.html"] img { content: url("icons/horse.svg"); }
+    .main-buttons a[href*="RDOMap"] img { content: url("icons/map.svg"); }
+    .main-buttons a[href="support.html"] img { content: url("icons/support.svg"); }
+    .container {
+      max-width: 540px;
+      margin: 40px auto;
+      background: #222;
+      border-radius: 18px;
+      box-shadow: 0 2px 18px #0002;
+      padding: 40px 38px 32px 38px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: stretch;
+    }
+    .container h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      font-size: 29px;
+      text-align: center;
+      color: #fff;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+    }
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: stretch;
+      direction: rtl;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      width: 100%;
+      gap: 7px;
+    }
+    label {
+      font-size: 17px;
+      color: #e2e2e2;
+      margin-bottom: 0px;
+      margin-right: 3px;
+      text-align: right;
+      width: 100%;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 18px 14px;
+      font-size: 16px;
+      border-radius: 8px;
+      background: #181818;
+      color: #fff;
+      border: 1.5px solid #333;
+      transition: border 0.2s;
+      resize: none;
+      box-sizing: border-box;
+      margin-bottom: 0;
+      direction: rtl;
+      text-align: right;
+    }
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border: 1.5px solid #999;
+    }
+    textarea {
+      min-height: 120px;
+      max-height: 300px;
+      font-family: 'Cairo', sans-serif;
+    }
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+      color: #b7b7b7;
+      opacity: 1;
+      text-align: right;
+    }
+    .file-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 7px;
+      width: 100%;
+      justify-content: flex-end;
+      direction: rtl;
+    }
+    .file-box label {
+      margin: 0;
+      padding: 10px 24px;
+      background: #1a1a1a;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 15.5px;
+      cursor: pointer;
+      font-weight: bold;
+      border: 1px solid #333;
+      transition: background 0.18s, color 0.15s;
+      min-width: 110px;
+      text-align: center;
+    }
+    .file-box label:hover { background: #272727; color: #ededed;}
+    .file-box span {
+      font-size: 14px;
+      color: #bbb;
+      max-width: 230px;
+      overflow-x: auto;
+      direction: ltr;
+      white-space: nowrap;
+      margin-right: 5px;
+      text-align: left;
+    }
+    .send-btn {
+      padding: 17px 0;
+      font-size: 18px;
+      border: none;
+      border-radius: 9px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #333 10%, #777 90%);
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.18s;
+      margin-top: 16px;
+      letter-spacing: 1px;
+      box-shadow: 0 1px 8px #0002;
+      width: 100%;
+      text-align: center;
+    }
+    .send-btn:hover { background: linear-gradient(90deg, #444 10%, #bbb 90%);}
+    .alert {
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      margin-bottom: 5px;
+      text-align: center;
+      margin-top: 7px;
+    }
+    .alert-success { background: #224e2a; color: #fff;}
+    .alert-error   { background: #892727; color: #fff;}
+    @media (max-width:700px) {
+      .container { padding: 18px 2vw; max-width: 97vw;}
+      header { flex-direction: column; gap: 10px;}
+    }
+  </style>
+</head>
+<body>
+<header>
+    <img src="icons/logo.png" alt="Logo" class="logo">
+    <div class="main-buttons">
+      <a href="animal.html"><img src="icons/animal.svg" alt="Animal Icon">قائمة الحيوانات</a>
+      <a href="supply.html"><img src="icons/supply.svg" alt="Supply Icon">مواقع التسليم</a>
+      <a href="https://jeanropke.github.io/RDOMap/" target="_blank"><img src="icons/map.svg" alt="Map Icon">الخريطة</a>
+      <a href="stable.html"><img src="icons/horse.svg" alt="Horse Icon">الأسطبل</a>
+    </div>
+    <a href="support.html"><img src="icons/support.svg" alt="Support" class="support-icon"></a>
+</header>
+
+<div class="container">
+  <h1>الدعم الفني</h1>
+  <form id="supportForm" autocomplete="off" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="name">اسمك (اختياري):</label>
+      <input type="text" id="name" name="name" maxlength="40" placeholder="">
+    </div>
+    <div class="form-group">
+      <label for="message">أستفسارك أو اقتراحك:</label>
+      <textarea id="message" name="message" maxlength="1000" placeholder=""></textarea>
+    </div>
+    <div class="form-group" style="margin-bottom: 0;">
+      <div class="file-box">
+        <label for="image">ارفق صورة (اختياري)</label>
+        <input type="file" id="image" accept="image/png,image/jpeg,image/jpg" style="display:none">
+        <span id="fileName"></span>
+      </div>
+    </div>
+    <button type="submit" class="send-btn">إرسال</button>
+    <div id="alert" class="alert" style="display:none"></div>
+  </form>
+</div>
+
+<script>
+const webhookUrl = "https://discord.com/api/webhooks/1396417841783246948/wkNj8M13CMzsDyZJdxjLWkUhg_hlk45niFn1OSuVOlHFxWGeUhQr3tNbuTWERr8Dnfj2";
+const alertBox = document.getElementById('alert');
+const form = document.getElementById('supportForm');
+const fileInput = document.getElementById('image');
+const fileNameSpan = document.getElementById('fileName');
+
+fileInput.addEventListener('change', function() {
+  fileNameSpan.textContent = fileInput.files.length ? fileInput.files[0].name : '';
+});
+
+form.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  alertBox.style.display = "none";
+  const name = document.getElementById('name').value.trim();
+  const message = document.getElementById('message').value.trim();
+  const file = fileInput.files[0];
+
+  if (!message || message.length < 6) {
+    showAlert("الرجاء كتابة رسالة مفصلة.", false);
+    return;
+  }
+  if (file && !file.type.startsWith('image/')) {
+    showAlert("الملف يجب أن يكون صورة فقط (PNG أو JPG).", false);
+    return;
+  }
+  if (file && file.size > 3 * 1024 * 1024) {
+    showAlert("حجم الصورة يجب أن لا يتجاوز 3 ميجا.", false);
+    return;
+  }
+
+  form.querySelector(".send-btn").disabled = true;
+  form.querySelector(".send-btn").textContent = "جارٍ الإرسال...";
+
+  let fields = [];
+  if (name) fields.push({ name: "الاسم", value: name, inline: false });
+  fields.push({ name: "الرسالة", value: message, inline: false });
+
+  let embed = {
+    title: "طلب دعم جديد",
+    color: 0x777777,
+    fields: fields,
+    timestamp: new Date().toISOString(),
+    footer: { text: "لوحة الدعم - الموقع" }
+  };
+
+  let formData = new FormData();
+
+  if (file) {
+    embed.image = { url: "attachment://" + file.name };
+    formData.append("file", file, file.name);
+    formData.append("payload_json", JSON.stringify({ embeds: [embed] }));
+  }
+
+  try {
+    if (file) {
+      await fetch(webhookUrl, {
+        method: "POST",
+        body: formData
+      });
+    } else {
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ embeds: [embed] })
+      });
+    }
+    showAlert("تم إرسال رسالتك بنجاح! سيتم الرد عليك قريبًا.", true);
+    form.reset();
+    fileNameSpan.textContent = '';
+  } catch {
+    showAlert("حصل خطأ أثناء الإرسال. حاول مرة أخرى.", false);
+  }
+  form.querySelector(".send-btn").disabled = false;
+  form.querySelector(".send-btn").textContent = "إرسال";
+});
+
+function showAlert(msg, success) {
+  alertBox.style.display = "block";
+  alertBox.textContent = msg;
+  alertBox.className = "alert " + (success ? "alert-success" : "alert-error");
+  setTimeout(() => { alertBox.style.display = "none"; }, success ? 5000 : 3500);
+}
+</script>
+</body>
+</html>
