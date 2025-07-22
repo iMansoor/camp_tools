@@ -57,6 +57,11 @@
       transition: width 0.3s ease;
       transform: translateY(-34px);
     }
+    .main-buttons a.active::after,
+    .main-buttons a:focus-visible::after {
+      width: 100%;
+      transform: translateY(-34px);
+    }
     .main-buttons a:hover::after {
       width: 100%;
       transform: translateY(-34px);
@@ -66,6 +71,12 @@
     }
     .main-buttons a[href="supply.html"] img {
       content: url("icons/supply.svg");
+    }
+    .main-buttons a[href="stable.html"] img {
+      content: url("icons/horse.svg");
+    }
+    .main-buttons a[href*="RDOMap"] img {
+      content: url("icons/map.svg");
     }
     .form {
       max-width: 500px;
@@ -83,14 +94,12 @@
       background: #181818;
       color: #fff;
       transform: translateY(15px);
-      
     }
     .form button {
       background: #444;
       cursor: pointer;
       transition: background 0.2s ease;
       transform: translateY(15px);
-      
     }
     .form button:hover {
       background: #666;
@@ -121,12 +130,11 @@
       padding-left: 40px;
       transform: translateY(-10px);
       margin-right: -1030px;
-      
     }
     .suggestions {
       background: #222;
       position: absolute;
-      top: 60px; /* Adjust as needed */
+      top: 60px;
       left: 0;
       width: 350px;
       max-height: 200px;
@@ -140,24 +148,21 @@
       list-style: none;
       transform: translateY(16px);
     }
-
     .suggestions li {
       display: flex;
       align-items: normal;
       padding: 3px;
       cursor: pointer;
       list-style: none;
-      gap: 6px; /* Reduce gap between icon and text */
+      gap: 6px;
     }
-
     .suggestions li img {
       width: 50px;
       height: 50px;
       object-fit: fill;
-      flex-shrink: 0; /* Prevents the image from shrinking */
+      flex-shrink: 0;
       transform: translate(15px, 0px);
     }
-
     .suggestions li:hover {
       background: #333;
     }
@@ -220,15 +225,13 @@
       object-fit: fill;
     }
     #animalInput {
-    font-size: 16px;
+      font-size: 16px;
     }
-
     #materialInput {
-        font-size: 16px;
+      font-size: 16px;
     }
-
     .form button {
-        font-size: 16px;
+      font-size: 16px;
     }
   </style>
 </head>
@@ -236,12 +239,13 @@
 <header>
     <img src="icons/logo.png" alt="Logo" class="logo">
     <div class="main-buttons">
-      <a href="animal.html"><img src="icons/animal.svg" alt="Animal Icon">قائمة الحيوانات</a>
+      <a href="animal.html" class="active"><img src="icons/animal.svg" alt="Animal Icon">قائمة الحيوانات</a>
       <a href="supply.html"><img src="icons/supply.svg" alt="Supply Icon">مواقع التسليم</a>
       <a href="https://jeanropke.github.io/RDOMap/" target="_blank"><img src="icons/map.svg" alt="Map Icon">الخريطة</a>
       <a href="stable.html"><img src="icons/horse.svg" alt="Horse Icon">الأسطبل</a>
     </div>
-    <a href="support.html"><img src="icons/support.svg" alt="Support" class="support-icon"></a>  </header>
+    <a href="support.html"><img src="icons/support.svg" alt="Support" class="support-icon"></a>
+</header>
 <div class="form">
   <div style="position: relative; flex: 1;">
     <input type="text" id="animalInput" placeholder="اسم الحيوان..." oninput="onAnimalInput()" autocomplete="off">
@@ -264,6 +268,11 @@
   <tbody id="logTable"></tbody>
 </table>
 <script>
+    // ... (باقي السكربت كما هو تمامًا بدون أي تغيير)
+    // انسخ هنا نفس السكربت اللي استخدمته بدون تعديل
+    // اللي تم تعديله فقط هو اضافة class="active" على زر animal.html في الهيدر
+    // عشان تأثير الخط الأبيض يظهر على الصفحة الحالية فقط
+
     const binId = "686101ff8561e97a502dfb0e";
     const apiKey = "$2a$10$iCoTiXC5Q2rvlvgOvL51WOONZG9ZufQABohuhB0E71Pz7/QjgW4/.";
     let entries = [];
@@ -410,15 +419,13 @@
           </button>
           <button onclick="confirmDelete(${entry._index})" style="background: none; border: none; padding: 0; cursor: pointer;">
             <img src="icons/delete.svg" alt="حذف" style="width: 30px; height: 30px;" />
-
           </button>
         </td>`;
       table.appendChild(row);
     });
   }  
 
-
     loadCreatures();
-  </script>
+</script>
 </body>
 </html>

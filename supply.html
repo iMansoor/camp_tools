@@ -57,6 +57,11 @@
       transition: width 0.3s ease;
       transform: translateY(-34px);
     }
+    .main-buttons a.active::after,
+    .main-buttons a:focus-visible::after {
+      width: 100%;
+      transform: translateY(-34px);
+    }
     .main-buttons a:hover::after {
       width: 100%;
       transform: translateY(-34px);
@@ -66,6 +71,12 @@
     }
     .main-buttons a[href="supply.html"] img {
       content: url("icons/supply.svg");
+    }
+    .main-buttons a[href="stable.html"] img {
+      content: url("icons/horse.svg");
+    }
+    .main-buttons a[href*="RDOMap"] img {
+      content: url("icons/map.svg");
     }
     .search-box {
       max-width: 1340px;
@@ -165,12 +176,11 @@
     <img src="icons/logo.png" alt="Logo" class="logo">
     <div class="main-buttons">
       <a href="animal.html"><img src="icons/animal.svg" alt="Animal Icon">قائمة الحيوانات</a>
-      <a href="supply.html"><img src="icons/supply.svg" alt="Supply Icon">مواقع التسليم</a>
+      <a href="supply.html" class="active"><img src="icons/supply.svg" alt="Supply Icon">مواقع التسليم</a>
       <a href="https://jeanropke.github.io/RDOMap/" target="_blank"><img src="icons/map.svg" alt="Map Icon">الخريطة</a>
       <a href="stable.html"><img src="icons/horse.svg" alt="Horse Icon">الأسطبل</a>
     </div>
     <a href="support.html"><img src="icons/support.svg" alt="Support" class="support-icon"></a>
-
   </header>
   <div class="search-box">
     <input type="number" id="searchInput" placeholder="بحث" min="1" max="100" oninput="filterLocations()" />

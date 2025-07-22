@@ -35,10 +35,21 @@
       display: flex; align-items: center; gap: 6px;
     }
     .main-buttons a::after {
-      content: ''; position: absolute; bottom: -42px; left: 0; width: 0%;
-      height: 2px; background: white; transition: width 0.3s ease; transform: translateY(-34px);
+      content: '';
+      position: absolute;
+      bottom: -42px;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: white;
+      transition: width 0.3s ease;
+      transform: translateY(-34px);
     }
-    .main-buttons a:hover::after { width: 100%; transform: translateY(-34px);}
+    .main-buttons a:hover::after,
+    .main-buttons a.active::after {
+      width: 100%;
+      transform: translateY(-34px);
+    }
     .main-buttons a[href="animal.html"] img { content: url("icons/animal.svg"); }
     .main-buttons a[href="supply.html"] img { content: url("icons/supply.svg"); }
     .main-buttons a[href="stable.html"] img { content: url("icons/horse.svg"); }
@@ -135,6 +146,16 @@
 </div>
 
 <script>
+// ======== Active Button Highlight ========
+document.addEventListener("DOMContentLoaded", function() {
+  // تحديد الصفحة تلقائيًا
+  const path = window.location.pathname.split('/').pop();
+  document.querySelectorAll('.main-buttons a').forEach(a => {
+    if (a.getAttribute('href') === path)
+      a.classList.add('active');
+  });
+});
+
 const horsesDataUrl = 'json/horses.json';
 const horsesImgPath = 'horses/';
 let horses = [];
@@ -145,18 +166,17 @@ function parseLevelDots(val) {
   let match = val.match(/(\d+)\((\d+)\)/);
   if (!match) return '';
   let white = parseInt(match[1]);
-  let lightGray = parseInt(match[2]);
-  let total = white + lightGray;
+  let gold = parseInt(match[2]);
+  let total = white + gold;
   let darkGray = 10 - total;
   let dots = '';
   for (let i = 0; i < white; i++)
     dots += '<span style="color:#fff;">●</span>';
-  for (let i = 0; i < lightGray; i++)
+  for (let i = 0; i < gold; i++)
     dots += '<span style="color:#FFD700;">●</span>';
   for (let i = 0; i < darkGray; i++)
     dots += '<span style="color:#333;">●</span>';
   return dots;
-  
 }
 
 function renderPrice(price) {
