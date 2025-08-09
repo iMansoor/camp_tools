@@ -216,88 +216,88 @@
 </div>
 
 <script>
-const webhookUrl = "https://discord.com/api/webhooks/1396417841783246948/wkNj8M13CMzsDyZJdxjLWkUhg_hlk45niFn1OSuVOlHFxWGeUhQr3tNbuTWERr8Dnfj2";
-const alertBox = document.getElementById('alert');
-const form = document.getElementById('supportForm');
-const fileInput = document.getElementById('image');
-const fileNameSpan = document.getElementById('fileName');
+  // ====== UPDATE THIS to your Worker URL ======
+  const webhookUrl = "https://camp-tools.workers.dev/api/support";
 
-fileInput.addEventListener('change', function() {
-  fileNameSpan.textContent = fileInput.files.length ? fileInput.files[0].name : '';
-});
+  const alertBox = document.getElementById('alert');
+  const form = document.getElementById('supportForm');
+  const fileInput = document.getElementById('image');
+  const fileNameSpan = document.getElementById('fileName');
 
-form.addEventListener('submit', async function(e) {
-  e.preventDefault();
-  alertBox.style.display = "none";
-  const name = document.getElementById('name').value.trim();
-  const message = document.getElementById('message').value.trim();
-  const file = fileInput.files[0];
+  fileInput.addEventListener('change', function() {
+    fileNameSpan.textContent = fileInput.files.length ? fileInput.files[0].name : '';
+  });
 
-  if (!message || message.length < 6) {
-    showAlert("الرجاء كتابة رسالة مفصلة.", false);
-    return;
-  }
-  if (file && !file.type.startsWith('image/')) {
-    showAlert("الملف يجب أن يكون صورة فقط (PNG أو JPG).", false);
-    return;
-  }
-  if (file && file.size > 3 * 1024 * 1024) {
-    showAlert("حجم الصورة يجب أن لا يتجاوز 3 ميجا.", false);
-    return;
-  }
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    alertBox.style.display = "none";
+    const name = document.getElementById('name').value.trim();
+    const message = document.getElementById('message').value.trim();
+    const file = fileInput.files[0];
 
-  form.querySelector(".send-btn").disabled = true;
-  form.querySelector(".send-btn").textContent = "جارٍ الإرسال...";
-
-  let fields = [];
-  if (name) fields.push({ name: "الاسم", value: name, inline: false });
-  fields.push({ name: "الرسالة", value: message, inline: false });
-
-  let embed = {
-    title: "طلب دعم جديد",
-    color: 0x777777,
-    fields: fields,
-    timestamp: new Date().toISOString(),
-    footer: { text: "لوحة الدعم - الموقع" }
-  };
-
-  let formData = new FormData();
-
-  if (file) {
-    embed.image = { url: "attachment://" + file.name };
-    formData.append("file", file, file.name);
-    formData.append("payload_json", JSON.stringify({ embeds: [embed] }));
-  }
-
-  try {
-    if (file) {
-      await fetch(webhookUrl, {
-        method: "POST",
-        body: formData
-      });
-    } else {
-      await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ embeds: [embed] })
-      });
+    if (!message || message.length < 6) {
+      showAlert("الرجاء كتابة رسالة مفصلة.", false);
+      return;
     }
-    showAlert("تم إرسال رسالتك بنجاح! سيتم الرد عليك قريبًا.", true);
-    form.reset();
-    fileNameSpan.textContent = '';
-  } catch {
-    showAlert("حصل خطأ أثناء الإرسال. حاول مرة أخرى.", false);
-  }
-  form.querySelector(".send-btn").disabled = false;
-  form.querySelector(".send-btn").textContent = "إرسال";
-});
+    if (file && !file.type.startsWith('image/')) {
+      showAlert("الملف يجب أن يكون صورة فقط (PNG أو JPG).", false);
+      return;
+    }
+    if (file && file.size > 3 * 1024 * 1024) {
+      showAlert("حجم الصورة يجب أن لا يتجاوز 3 ميجا.", false);
+      return;
+    }
 
-function showAlert(msg, success) {
-  alertBox.style.display = "block";
-  alertBox.textContent = msg;
-  alertBox.className = "alert " + (success ? "alert-success" : "alert-error");
-  setTimeout(() => { alertBox.style.display = "none"; }, success ? 5000 : 3500);
-}
+    const btn = form.querySelector(".send-btn");
+    btn.disabled = true;
+    btn.textContent = "جارٍ الإرسال...";
+
+    let fields = [];
+    if (name) fields.push({ name: "الاسم", value: name, inline: false });
+    fields.push({ name: "الرسالة", value: message, inline: false });
+
+    let embed = {
+      title: "طلب دعم جديد",
+      color: 0x777777,
+      fields: fields,
+      timestamp: new Date().toISOString(),
+      footer: { text: "لوحة الدعم - الموقع" }
+    };
+
+    try {
+      if (file) {
+        const formData = new FormData();
+        embed.image = { url: "attachment://" + file.name };
+        formData.append("file", file, file.name);
+        formData.append("payload_json", JSON.stringify({ embeds: [embed] }));
+
+        await fetch(webhookUrl, { method: "POST", body: formData });
+      } else {
+        await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ embeds: [embed] })
+        });
+      }
+
+      showAlert("تم إرسال رسالتك بنجاح! سيتم الرد عليك قريبًا.", true);
+      form.reset();
+      fileNameSpan.textContent = '';
+    } catch (err) {
+      console.error(err);
+      showAlert("حصل خطأ أثناء الإرسال. حاول مرة أخرى.", false);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "إرسال";
+    }
+  });
+
+  function showAlert(msg, success) {
+    alertBox.style.display = "block";
+    alertBox.textContent = msg;
+    alertBox.className = "alert " + (success ? "alert-success" : "alert-error");
+    setTimeout(() => { alertBox.style.display = "none"; }, success ? 5000 : 3500);
+  }
 </script>
 </body>
 </html>
